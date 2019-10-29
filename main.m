@@ -2,14 +2,13 @@ clear all;
 close all;
 clc;
 
-%% NOTE: Download videos to hard disk (not cloud) before running this code.
 %% Import patients
 allPatients = [1 2 3 4 5 6 7 8 9 10];
 
-%% Input Region Number -- must be an array
+%% Input Region Number (For Single Region Analysis)
 regionNumber = 332;
+
 % Choice of forehead, cheek or background.
-% RegionArray is laid out
 regionArray = xlsread('foreheadRegions.xlsx');
 
 counter = 1;
@@ -18,6 +17,9 @@ k = 1;
 global redTime;
 global blueTime;
 global greenTime;
+
+%% VIDEO INPUT, COLOUR CHANNEL SEPARATION
+% ======================================================================
 
 for counter = 1:length(allPatients)
    % for cols = 1:length(regionArray)
@@ -43,7 +45,7 @@ for counter = 1:length(allPatients)
         end
 
     %% Analyse frames
-       [redTime, greenTime, blueTime, avgR, video] = analyseFrames(capture, regionNumber);
+    [redTime, greenTime, blueTime, avgR, video] = analyseFrames(capture, regionNumber);
 
     %% Import Grouth Truth Results
     % Extract Ground Values from Input Data
@@ -59,7 +61,7 @@ for counter = 1:length(allPatients)
 
     %% SPO2 CALCULATION SECTION
     % ======================================================================
-    [avgSpO2_estimate, SpO2_estimates, p] = spO2Calc_New(green, blue, redUpper,redLower, blueUpper, blueLower, gnd_SpO2);
+    [avgSpO2_estimate, SpO2_estimates] = spO2Calc_New(green, blue, redUpper,redLower, blueUpper, blueLower, gnd_SpO2);
 
     %% ERROR CALCULATION
     % ======================================================================
@@ -80,10 +82,12 @@ for counter = 1:length(allPatients)
     % & Results - stored in Plotting.m
 
     %% Output Results to File
-    patient(k,:) = [str2double(patientNumber) regionNumber avgPulse_estimate avgSpO2_estimate errorPerc_Pulse errorPerc_SpO2];
-   calibration(k, :) = [p(1) p(2)];
+    patient(k,:) = [str2double(patientNumber) regionNumber avgPulse_estimate avgSpO2_estimate errorPerc_Pulse errorPerc_SpO2 avgGndPulse avgGndSpO2];
+    %calibration(k, :) = [p(1) p(2)];
     results{allPatients(counter)} = patient;
-    calibrations{allPatients(counter)} = calibration;
+    %calibrations{allPatients(counter)} = calibration;
+    %timeSeriesSpO2(k, :) = [SpO2_estimates];
+    %timeSeriesSpO2{allPatients(counter)} = timeSeriesSpO2;
     end
   %end
 end
@@ -91,28 +95,23 @@ save('results', 'results');
 
 %% STANDARD ERROR (ENTIRE DATASET)
 % ======================================================================
-% ragequit option: std(results{1, 1}(:, 3)/sqrt(n))
 
 stError_Pulse = standardErrorCalc(allPatients, results, 3);
 stError_SpO2 = standardErrorCalc(allPatients, results, 4);
 stError_PercErrorPulse = standardErrorCalc(allPatients, results, 5);
 stError_PercErrorSpO2 = standardErrorCalc(allPatients, results, 6);
 
-%% STANDARD ERROR (MOVING WINDOW)
-% ======================================================================
-% stError_Pulse_Moving = movingWindow(pulse_estimates);
-
 %% T-TEST (To Be Run After Main Test)
 % ======================================================================
-fhResults = xlsread('MidsemBreak_SpO2Green.xlsx', 'Forehead');
-cheekResults = xlsread('MidsemBreak_SpO2Green.xlsx', 'Cheek');
-bgResults = xlsread('MidsemBreak_SpO2Green.xlsx', 'Background');
-
-%Set to 3 for pulse, set to 4 for SpO2
-fhResults = fhResults(1:50, 4);
-cheekResults = cheekResults(1:50, 4);
-bgResults = bgResults(1:50, 4);
-
-[tTest_forehead, pFhd] = ttest(fhResults, bgResults)
-[tTest_cheek, pChk] = ttest(cheekResults, bgResults)
+% fhResults = xlsread('MidsemBreak_SpO2Green.xlsx', 'Forehead');
+% cheekResults = xlsread('MidsemBreak_SpO2Green.xlsx', 'Cheek');
+% bgResults = xlsread('MidsemBreak_SpO2Green.xlsx', 'Background');
+% 
+% %Set to 3 for pulse, set to 4 for SpO2
+% fhResults = fhResults(1:50, 4);
+% cheekResults = cheekResults(1:50, 4);
+% bgResults = bgResults(1:50, 4);
+% 
+% [tTest_forehead, pFhd] = ttest(fhResults, bgResults)
+% [tTest_cheek, pChk] = ttest(cheekResults, bgResults)
 

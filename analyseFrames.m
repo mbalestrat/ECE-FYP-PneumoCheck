@@ -24,7 +24,7 @@ i = 1;
         %select & save ROI value in video frame (default of midpoint chosen)
         % formerly 320
             redTime(i) = avgR(1,1, regionNumber);
-            greenTime(i) = avgG(1,1, regionNumber); % avgG(regionY, regionX); 
+            greenTime(i) = avgG(1,1, regionNumber);
             blueTime(i) = avgB(1,1, regionNumber);
 
             %take value of R,G,B layers (add to running total)

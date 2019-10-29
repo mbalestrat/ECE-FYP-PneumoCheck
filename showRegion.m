@@ -1,6 +1,6 @@
 function showRegion(regionNumber, avgR, video)
-%UNTITLED9 Summary of this function goes here
-%   Detailed explanation goes here
+%showRegion This function previews the ROI on the patient
+
 %% Show ROI
 % New approach
 cursor = mod(regionNumber, length(avgR)); %regionNumber

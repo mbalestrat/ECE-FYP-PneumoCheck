@@ -1,4 +1,4 @@
-function [red, green, blue, redUpper,redLower, blueUpper, blueLower ] = filterStages(redTime,greenTime, blueTime, fs)
+function [red, green, blue, redUpper,redLower, blueUpper, blueLower ] = filterStageslivecap(redTime,greenTime, blueTime, fs)
 %filterStages Applies all filters to each colour channel
 
 % Initial Bandpass Filtering
@@ -51,9 +51,9 @@ bluDtrended = Dbnew(~ib);
 redDtrended = Drnew(~ir);
 
 %Make all inputs same length
-green = green(1:1500);
-red = red(1:1500);
-blue = blue(1:1500);
+green = green(1:500);
+red = red(1:500);
+blue = blue(1:500);
 
 green = bandy(grnDtrended);
 blue = bandyBlue(bluDtrended);

@@ -1,4 +1,5 @@
 function dividedImage = divideIntoBlocks(InputImage,BlockSize)
+% Divides input image into array of indexes of input block size
 img1 = InputImage;
 TOTAL_BLOCKS = size(img1,1)*size(img1,2) / (BlockSize*BlockSize);
 dividedImage = zeros([BlockSize BlockSize TOTAL_BLOCKS]);
